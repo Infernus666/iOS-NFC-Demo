@@ -4,11 +4,15 @@
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13772"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="CourierNew.ttf">
+            <string>CourierNewPSMT</string>
+        </array>
+    </customFonts>
     <scenes>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
@@ -18,12 +22,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y3o-aO-efy">
-                                <rect key="frame" x="25" y="293.5" width="325" height="0.0"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FFe-zR-hnK">
                                 <rect key="frame" x="25" y="597" width="325" height="40"/>
                                 <constraints>
@@ -34,22 +32,32 @@
                                     <action selector="scanTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="xwg-gN-iXm"/>
                                 </connections>
                             </button>
+                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="y5V-3n-OnA">
+                                <rect key="frame" x="20" y="30" width="335" height="537"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" name="CourierNewPSMT" family="Courier New" pointSize="13"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                            </textView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="y5V-3n-OnA" secondAttribute="trailing" constant="20" id="BdL-BO-YPC"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="FFe-zR-hnK" secondAttribute="trailing" constant="25" id="Lpi-Tc-g8J"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="FFe-zR-hnK" secondAttribute="bottom" constant="30" id="MbA-Je-s4g"/>
-                            <constraint firstItem="y3o-aO-efy" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="25" id="SjI-UL-Skv"/>
-                            <constraint firstItem="y3o-aO-efy" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" constant="-40" id="k0C-FJ-fQZ"/>
+                            <constraint firstItem="y5V-3n-OnA" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="bzc-ue-S8x"/>
+                            <constraint firstItem="y5V-3n-OnA" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="10" id="lco-hI-COu"/>
+                            <constraint firstItem="FFe-zR-hnK" firstAttribute="top" secondItem="y5V-3n-OnA" secondAttribute="bottom" constant="30" id="oHj-C9-DIf"/>
                             <constraint firstItem="FFe-zR-hnK" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="25" id="oRU-hY-8A1"/>
-                            <constraint firstItem="y3o-aO-efy" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="swv-Ej-HC5"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="y3o-aO-efy" secondAttribute="trailing" constant="25" id="xOQ-MR-7XV"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <connections>
+                        <outlet property="logText" destination="y5V-3n-OnA" id="fEQ-7n-slY"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="136.80000000000001" y="132.68365817091455"/>
         </scene>
     </scenes>
 </document>
