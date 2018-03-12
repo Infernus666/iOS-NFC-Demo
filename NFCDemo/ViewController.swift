@@ -17,6 +17,8 @@ class ViewController: UIViewController, NFCNDEFReaderSessionDelegate {
     var isReadCycleActive = false
     var cachedInitialRead: Int? = nil
     
+    var hasAutoInvalidated = false
+    
     let font = UIFont(name: "Courier", size: 12)!
     let boldFont = UIFont(name: "Courier-Bold", size: 12)!
     let boldSmallFont = UIFont(name: "Courier-Bold", size: 11)!
@@ -33,10 +35,13 @@ class ViewController: UIViewController, NFCNDEFReaderSessionDelegate {
     }
     
     func readerSession(_ session: NFCNDEFReaderSession, didInvalidateWithError error: Error) {
-        isSessionActive = false
         cachedInitialRead = nil
-        print("The session was invalidated: \(error.localizedDescription)")
-        updateLog(withTerminationReason: error.localizedDescription)
+        
+        if !hasAutoInvalidated {
+            isSessionActive = false
+            print("The session was invalidated: \(error.localizedDescription)")
+            updateLog(withTerminationReason: error.localizedDescription)
+        } else { hasAutoInvalidated = false }
     }
     
     func readerSession(_ session: NFCNDEFReaderSession, didDetectNDEFs messages: [NFCNDEFMessage]) {
@@ -75,15 +80,18 @@ class ViewController: UIViewController, NFCNDEFReaderSessionDelegate {
             print(chars)
         }
         
-//        session.invalidate()
-//
+        session.invalidate()
+        hasAutoInvalidated = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            self.nfcSession = NFCNDEFReaderSession.init(delegate: self, queue: nil, invalidateAfterFirstRead: false)
+            self.nfcSession?.alertMessage = "Hold your NFC-tag to the back-top of your iPhone"
+            self.nfcSession?.begin()
+            self.isReadCycleActive = true
+        }
+        
+        
 //        if !isReadCycleActive {
-//            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-//                self.nfcSession = NFCNDEFReaderSession.init(delegate: self, queue: nil, invalidateAfterFirstRead: false)
-//                self.nfcSession?.alertMessage = "Hold your NFC-tag to the back-top of your iPhone"
-//                self.nfcSession?.begin()
-//                self.isReadCycleActive = true
-//            }
+        
 //        } else {
 //            isReadCycleActive = false
 //        }
