@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		1FA163B2D23FFD874EBB77C0 /* Pods_NFCDemo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3C81FB42B0D721305114403 /* Pods_NFCDemo.framework */; };
+		212F349D20568A7500D2219F /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 212F349C20568A7400D2219F /* Date+Extension.swift */; };
 		2147C34E202D8C6A009CD73C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2147C34D202D8C6A009CD73C /* AppDelegate.swift */; };
 		2147C350202D8C6A009CD73C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2147C34F202D8C6A009CD73C /* ViewController.swift */; };
 		2147C353202D8C6A009CD73C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2147C351202D8C6A009CD73C /* Main.storyboard */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		212F349C20568A7400D2219F /* Date+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Date+Extension.swift"; sourceTree = "<group>"; };
 		2147C34A202D8C6A009CD73C /* NFCDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NFCDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2147C34D202D8C6A009CD73C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		2147C34F202D8C6A009CD73C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -62,6 +64,7 @@
 		2147C34C202D8C6A009CD73C /* NFCDemo */ = {
 			isa = PBXGroup;
 			children = (
+				212F349C20568A7400D2219F /* Date+Extension.swift */,
 				2147C35F202D9EA1009CD73C /* NFCDemo.entitlements */,
 				2147C34D202D8C6A009CD73C /* AppDelegate.swift */,
 				2147C34F202D8C6A009CD73C /* ViewController.swift */,
@@ -226,6 +229,7 @@
 			files = (
 				2147C350202D8C6A009CD73C /* ViewController.swift in Sources */,
 				2147C34E202D8C6A009CD73C /* AppDelegate.swift in Sources */,
+				212F349D20568A7500D2219F /* Date+Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

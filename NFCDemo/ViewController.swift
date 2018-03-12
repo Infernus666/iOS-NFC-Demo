@@ -14,10 +14,12 @@ class ViewController: UIViewController, NFCNDEFReaderSessionDelegate {
     @IBOutlet weak var logText: UITextView!
     var nfcSession: NFCNDEFReaderSession?
     var isSessionActive = false
+    var isReadCycleActive = false
+    var cachedInitialRead: Int? = nil
     
-    let font = UIFont(name: "Courier", size: 13)!
-    let boldFont = UIFont(name: "Courier-Bold", size: 13)!
-    let boldSmallFont = UIFont(name: "Courier-Bold", size: 12)!
+    let font = UIFont(name: "Courier", size: 12)!
+    let boldFont = UIFont(name: "Courier-Bold", size: 12)!
+    let boldSmallFont = UIFont(name: "Courier-Bold", size: 11)!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -32,6 +34,7 @@ class ViewController: UIViewController, NFCNDEFReaderSessionDelegate {
     
     func readerSession(_ session: NFCNDEFReaderSession, didInvalidateWithError error: Error) {
         isSessionActive = false
+        cachedInitialRead = nil
         print("The session was invalidated: \(error.localizedDescription)")
         updateLog(withTerminationReason: error.localizedDescription)
     }
@@ -65,11 +68,67 @@ class ViewController: UIViewController, NFCNDEFReaderSessionDelegate {
                 }
             }
             
-            updateLog(withFirst6: strInitial, continuous: strCont, initial: strInit, cycle: strCycle)
+//            updateLog(withFirst6: strInitial, continuous: strCont, initial: strInit, cycle: strCycle)
+            
+            updateLog(forChars: chars)
+            
             print(chars)
         }
         
 //        session.invalidate()
+//
+//        if !isReadCycleActive {
+//            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+//                self.nfcSession = NFCNDEFReaderSession.init(delegate: self, queue: nil, invalidateAfterFirstRead: false)
+//                self.nfcSession?.alertMessage = "Hold your NFC-tag to the back-top of your iPhone"
+//                self.nfcSession?.begin()
+//                self.isReadCycleActive = true
+//            }
+//        } else {
+//            isReadCycleActive = false
+//        }
+        
+//        session.begin()
+    }
+    
+    
+    
+    
+    
+    private func updateLog(forChars chars: [String]) {
+        let initialRead = hexToDecimal(hex: "\(chars[9])\(chars[8])")
+        let finalRead = hexToDecimal(hex: "\(chars[7])\(chars[6])")
+        let disChargeCount = hexToDecimal(hex: "\(chars[11])\(chars[10])")
+        
+        if cachedInitialRead == nil { cachedInitialRead = initialRead }
+        
+        let initialReadPercent = (Float(initialRead) / Float(cachedInitialRead!)) * 100.0
+        let finalReadPercent = (Float(finalRead) / Float(cachedInitialRead!)) * 100.0
+        
+        let timeStamp = Date().HHMMssSS
+        
+        let grey = [NSAttributedStringKey.foregroundColor: UIColor.gray, NSAttributedStringKey.font: font] as [NSAttributedStringKey : Any]
+        let purple = [NSAttributedStringKey.foregroundColor: UIColor.purple, NSAttributedStringKey.font: boldFont] as [NSAttributedStringKey : Any]
+        let blue = [NSAttributedStringKey.foregroundColor: UIColor.blue, NSAttributedStringKey.font: boldFont] as [NSAttributedStringKey : Any]
+        let black = [NSAttributedStringKey.foregroundColor: UIColor.black, NSAttributedStringKey.font: boldFont] as [NSAttributedStringKey : Any]
+        
+        let attr1 = NSAttributedString(string: timeStamp + "> ", attributes: grey)
+        let attr2 = NSAttributedString(string: "i:\(String(format: "% 6.2f", initialReadPercent))%; ", attributes: purple)
+        let attr3 = NSAttributedString(string: "f:\(String(format: "% 6.2f", finalReadPercent))%; ", attributes: blue)
+        let attr4 = NSAttributedString(string: "dc:\(disChargeCount)", attributes: black)
+        
+        let mutableAttributedString = NSMutableAttributedString(attributedString: attr1)
+        mutableAttributedString.append(attr3)
+        mutableAttributedString.append(attr2)
+        mutableAttributedString.append(attr4)
+        
+//        let line = "\(timeStamp), latest:\(finalReadPercent)%, first: \(initialReadPercent)%, discharge cycles: \(disChargeCount)"
+        
+        updateLog(withLine: mutableAttributedString)
+    }
+    
+    private func hexToDecimal(hex: String) -> Int {
+        return Int(hex, radix: 16)!
     }
     
     private func updateLog(withFirst6 first6: String, continuous cont: String, initial ini: String, cycle cyc: String) {
@@ -92,7 +151,7 @@ class ViewController: UIViewController, NFCNDEFReaderSessionDelegate {
     
     private func updateLog(withTerminationReason reason: String) {
         let grey = [NSAttributedStringKey.foregroundColor: UIColor.gray, NSAttributedStringKey.font: font] as [NSAttributedStringKey : Any]
-        let attr1 = NSAttributedString(string: "-----------------------------------\n", attributes: grey)
+        let attr1 = NSAttributedString(string: "---------------------------------------------\n", attributes: grey)
         let attr2 = NSAttributedString(string: reason, attributes: [NSAttributedStringKey.font: boldSmallFont])
         
         let mutableAttributedString = NSMutableAttributedString(attributedString: attr1)
