@@ -35,9 +35,8 @@ class ViewController: UIViewController, NFCNDEFReaderSessionDelegate {
     }
     
     func readerSession(_ session: NFCNDEFReaderSession, didInvalidateWithError error: Error) {
-        cachedInitialRead = nil
-        
         if !hasAutoInvalidated {
+            cachedInitialRead = nil
             isSessionActive = false
             print("The session was invalidated: \(error.localizedDescription)")
             updateLog(withTerminationReason: error.localizedDescription)
@@ -80,24 +79,19 @@ class ViewController: UIViewController, NFCNDEFReaderSessionDelegate {
             print(chars)
         }
         
-        session.invalidate()
-        hasAutoInvalidated = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            self.nfcSession = NFCNDEFReaderSession.init(delegate: self, queue: nil, invalidateAfterFirstRead: false)
-            self.nfcSession?.alertMessage = "Hold your NFC-tag to the back-top of your iPhone"
-            self.nfcSession?.begin()
-            self.isReadCycleActive = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            session.invalidate()
+            self.hasAutoInvalidated = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                self.nfcSession = NFCNDEFReaderSession.init(delegate: self, queue: nil, invalidateAfterFirstRead: false)
+                self.nfcSession?.alertMessage = "Hold your NFC-tag to the back-top of your iPhone"
+                self.nfcSession?.begin()
+                self.isReadCycleActive = true
+            }
         }
-        
-        
-//        if !isReadCycleActive {
-        
-//        } else {
-//            isReadCycleActive = false
-//        }
-        
-//        session.begin()
     }
+    
+    
     
     
     
@@ -110,10 +104,13 @@ class ViewController: UIViewController, NFCNDEFReaderSessionDelegate {
         
         if cachedInitialRead == nil { cachedInitialRead = initialRead }
         
-        let initialReadPercent = (Float(initialRead) / Float(cachedInitialRead!)) * 100.0
-        let finalReadPercent = (Float(finalRead) / Float(cachedInitialRead!)) * 100.0
+        let initialReadPercent = cachedInitialRead == nil || cachedInitialRead! == 0 ? 0 : (initialRead.nonZeroFloat / cachedInitialRead!.nonZeroFloat) * 100.0
+        let finalReadPercent = cachedInitialRead == nil || cachedInitialRead! == 0 ? 0 : (finalRead.nonZeroFloat / cachedInitialRead!.nonZeroFloat) * 100.0
         
         let timeStamp = Date().HHMMssSS
+        
+        let initialReadingStr = (chars[8] == "43" && chars[9] == "44") ? "uninit; " : "\(String(format: "% 6.2f", initialReadPercent))%"
+        let finalReadingStr = (chars[6] == "41" && chars[7] == "42") ? "uninit; " : "\(String(format: "% 6.2f", finalReadPercent))%"
         
         let grey = [NSAttributedStringKey.foregroundColor: UIColor.gray, NSAttributedStringKey.font: font] as [NSAttributedStringKey : Any]
         let purple = [NSAttributedStringKey.foregroundColor: UIColor.purple, NSAttributedStringKey.font: boldFont] as [NSAttributedStringKey : Any]
@@ -121,8 +118,8 @@ class ViewController: UIViewController, NFCNDEFReaderSessionDelegate {
         let black = [NSAttributedStringKey.foregroundColor: UIColor.black, NSAttributedStringKey.font: boldFont] as [NSAttributedStringKey : Any]
         
         let attr1 = NSAttributedString(string: timeStamp + "> ", attributes: grey)
-        let attr2 = NSAttributedString(string: "i:\(String(format: "% 6.2f", initialReadPercent))%; ", attributes: purple)
-        let attr3 = NSAttributedString(string: "f:\(String(format: "% 6.2f", finalReadPercent))%; ", attributes: blue)
+        let attr2 = NSAttributedString(string: "i:\(initialReadingStr); ", attributes: purple)
+        let attr3 = NSAttributedString(string: "c:\(finalReadingStr); ", attributes: blue)
         let attr4 = NSAttributedString(string: "dc:\(disChargeCount)", attributes: black)
         
         let mutableAttributedString = NSMutableAttributedString(attributedString: attr1)
@@ -191,6 +188,13 @@ class ViewController: UIViewController, NFCNDEFReaderSessionDelegate {
 }
 
 
+
+extension Int {
+    var nonZeroFloat: Float {
+        if self == 0 { return 0.0001 }
+        else { return Float(self) }
+    }
+}
 
 
 
